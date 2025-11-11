@@ -1,6 +1,8 @@
 import Link from "next/link";
+import { DocsNav } from "@/components/docs/docs-nav";
 import { DocsSearch } from "@/components/docs/docs-search";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import {
   BookOpen,
   HelpCircle,
@@ -57,64 +59,71 @@ const docSections = [
 
 export default function DocsPage() {
   return (
-    <div className="min-h-screen">
-      {/* Hero Section */}
-      <section className="border-b bg-gradient-to-b from-background to-muted/20">
-        <div className="container py-16 md:py-24">
-          <div className="mx-auto max-w-3xl text-center">
-            <h1 className="mb-4 text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl">
-              Documentation
+    <div className="container py-8 md:py-12">
+      <div className="flex flex-col gap-8 md:flex-row">
+        {/* Sidebar Navigation */}
+        <aside className="md:w-64 lg:w-72">
+          <DocsNav />
+        </aside>
+
+        {/* Main Content */}
+        <main className="flex-1 min-w-0">
+          {/* Header */}
+          <div className="mb-8">
+            <Badge className="mb-4">Documentation Hub</Badge>
+            <h1 className="mb-4 text-4xl font-bold tracking-tight">
+              Documentation Overview
             </h1>
-            <p className="mb-8 text-lg text-muted-foreground md:text-xl">
-              Everything you need to know about creating adorable plushies with AI
+            <p className="text-lg text-muted-foreground">
+              Everything you need to know about creating adorable plushies with AI.
+              Choose a topic below to get started.
             </p>
-            <div className="mx-auto max-w-lg">
-              <DocsSearch />
+          </div>
+
+          {/* Search */}
+          <div className="mb-12">
+            <DocsSearch />
+          </div>
+
+          {/* Navigation Cards */}
+          <div className="mb-12">
+            <h2 className="mb-6 text-2xl font-semibold">Browse Documentation</h2>
+            <div className="grid gap-6 md:grid-cols-2">
+              {docSections.map((section) => {
+                const Icon = section.icon;
+                return (
+                  <Link
+                    key={section.href}
+                    href={section.href}
+                    className="group transition-transform hover:scale-105"
+                  >
+                    <Card className="h-full border-2 transition-colors hover:border-primary">
+                      <CardHeader>
+                        <div className="mb-4 flex items-center gap-3">
+                          <div className="rounded-lg bg-muted p-2">
+                            <Icon className={`h-6 w-6 ${section.color}`} />
+                          </div>
+                        </div>
+                        <CardTitle className="group-hover:text-primary transition-colors">
+                          {section.title}
+                        </CardTitle>
+                        <CardDescription className="line-clamp-2">
+                          {section.description}
+                        </CardDescription>
+                      </CardHeader>
+                    </Card>
+                  </Link>
+                );
+              })}
             </div>
           </div>
-        </div>
-      </section>
 
-      {/* Navigation Cards */}
-      <section className="container py-16 md:py-24">
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {docSections.map((section) => {
-            const Icon = section.icon;
-            return (
-              <Link
-                key={section.href}
-                href={section.href}
-                className="group transition-transform hover:scale-105"
-              >
-                <Card className="h-full border-2 transition-colors hover:border-primary">
-                  <CardHeader>
-                    <div className="mb-4 flex items-center gap-3">
-                      <div className="rounded-lg bg-muted p-2">
-                        <Icon className={`h-6 w-6 ${section.color}`} />
-                      </div>
-                    </div>
-                    <CardTitle className="group-hover:text-primary transition-colors">
-                      {section.title}
-                    </CardTitle>
-                    <CardDescription className="line-clamp-2">
-                      {section.description}
-                    </CardDescription>
-                  </CardHeader>
-                </Card>
-              </Link>
-            );
-          })}
-        </div>
-      </section>
-
-      {/* Quick Links Section */}
-      <section className="border-t bg-muted/20">
-        <div className="container py-16">
-          <div className="mx-auto max-w-3xl text-center">
-            <h2 className="mb-4 text-2xl font-bold md:text-3xl">
+          {/* Quick Links Section */}
+          <div className="rounded-lg border-2 border-primary/20 bg-gradient-to-br from-primary/5 to-primary/10 p-8 text-center">
+            <h3 className="mb-3 text-2xl font-bold">
               Need Help Getting Started?
-            </h2>
-            <p className="mb-8 text-muted-foreground">
+            </h3>
+            <p className="mb-6 text-muted-foreground">
               Check out these popular resources to get up and running quickly
             </p>
             <div className="flex flex-wrap justify-center gap-4">
@@ -138,8 +147,8 @@ export default function DocsPage() {
               </Link>
             </div>
           </div>
-        </div>
-      </section>
+        </main>
+      </div>
     </div>
   );
 }

@@ -41,7 +41,7 @@ export default function ProfilePage() {
   );
 
   return (
-    <div className="container max-w-6xl mx-auto py-8 px-4">
+    <div className="container max-w-7xl mx-auto py-8 px-4">
       {/* Page Header */}
       <div className="mb-8">
         <h1 className="text-4xl font-bold mb-2">Your Profile</h1>

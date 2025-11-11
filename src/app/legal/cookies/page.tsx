@@ -1,8 +1,8 @@
 "use client";
 
-import { TableOfContents } from "@/components/legal/table-of-contents";
-import { LastUpdated } from "@/components/legal/last-updated";
-import { BackToTop } from "@/components/legal/back-to-top";
+import { LegalNav } from "@/components/legal/legal-nav";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 import { Cookie, Info, Settings, FileText } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -12,26 +12,32 @@ export default function CookiePolicyPage() {
 
   return (
     <>
-      <div className="container mx-auto px-4 py-12 max-w-7xl">
-        {/* Header */}
-        <div className="mb-12 text-center">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <Cookie className="h-10 w-10 text-primary" />
-            <h1 className="text-4xl font-bold">Cookie Policy</h1>
-          </div>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            This policy explains how Plushify uses cookies and similar tracking
-            technologies to enhance your experience and improve our service.
-          </p>
-          <div className="mt-6 flex justify-center">
-            <LastUpdated date="January 15, 2025" />
-          </div>
-        </div>
+      <div className="container py-8 md:py-12">
+        <div className="flex flex-col gap-8 md:flex-row">
+          {/* Sidebar Navigation */}
+          <aside className="md:w-64 lg:w-72">
+            <LegalNav />
+          </aside>
 
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_250px] gap-12">
           {/* Main Content */}
-          <main className="prose prose-gray dark:prose-invert max-w-none">
-            <section>
+          <main className="flex-1 min-w-0">
+            {/* Header */}
+            <div className="mb-8">
+              <Badge className="mb-4">Legal</Badge>
+              <h1 className="mb-4 text-4xl font-bold tracking-tight">
+                Cookie Policy
+              </h1>
+              <p className="text-lg text-muted-foreground">
+                This policy explains how Plushify uses cookies and similar tracking
+                technologies to enhance your experience and improve our service.
+              </p>
+            </div>
+
+            <Separator className="my-8" />
+
+            {/* Content */}
+            <div className="prose prose-gray dark:prose-invert max-w-none">
+              <section>
               <h2 id="what-are-cookies" className="flex items-center gap-2">
                 <Info className="h-6 w-6 text-primary" />
                 What Are Cookies?
@@ -48,6 +54,8 @@ export default function CookiePolicyPage() {
                 to all of these technologies collectively as &quot;cookies.&quot;
               </p>
             </section>
+
+            <Separator className="my-8" />
 
             <section>
               <h2 id="how-we-use-cookies" className="flex items-center gap-2">
@@ -83,6 +91,8 @@ export default function CookiePolicyPage() {
                 </li>
               </ul>
             </section>
+
+            <Separator className="my-8" />
 
             <section>
               <h2 id="types-of-cookies" className="flex items-center gap-2">
@@ -178,6 +188,8 @@ export default function CookiePolicyPage() {
               </p>
             </section>
 
+            <Separator className="my-8" />
+
             <section>
               <h2 id="third-party-cookies">Third-Party Cookies</h2>
               <p>
@@ -210,6 +222,8 @@ export default function CookiePolicyPage() {
               </p>
             </section>
 
+            <Separator className="my-8" />
+
             <section>
               <h2 id="cookie-duration">Cookie Duration</h2>
               <p>Cookies may be temporary or persistent:</p>
@@ -239,6 +253,8 @@ export default function CookiePolicyPage() {
                 </li>
               </ul>
             </section>
+
+            <Separator className="my-8" />
 
             <section>
               <h2 id="managing-cookies" className="flex items-center gap-2">
@@ -333,6 +349,8 @@ export default function CookiePolicyPage() {
               </div>
             </section>
 
+            <Separator className="my-8" />
+
             <section>
               <h2 id="do-not-track">Do Not Track Signals</h2>
               <p>
@@ -347,6 +365,8 @@ export default function CookiePolicyPage() {
                 consent tool.
               </p>
             </section>
+
+            <Separator className="my-8" />
 
             <section>
               <h2 id="changes-to-policy">Changes to This Cookie Policy</h2>
@@ -368,6 +388,8 @@ export default function CookiePolicyPage() {
                 stay informed about how we use cookies.
               </p>
             </section>
+
+            <Separator className="my-8" />
 
             <section>
               <h2 id="more-information" className="flex items-center gap-2">
@@ -410,49 +432,13 @@ export default function CookiePolicyPage() {
                 </p>
               </div>
             </section>
+            </div>
 
-            {/* Back to top */}
-            <BackToTop />
+            {/* Last Updated */}
+            <div className="mt-8 text-sm text-muted-foreground">
+              Last updated: January 15, 2025
+            </div>
           </main>
-
-          {/* Table of Contents */}
-          <TableOfContents />
-        </div>
-
-        {/* Related Legal Pages */}
-        <div className="mt-16 pt-8 border-t">
-          <h3 className="text-lg font-semibold mb-4">
-            Related Legal Documents
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <a
-              href="/legal/privacy"
-              className="p-4 border rounded-lg hover:border-primary transition-colors"
-            >
-              <h4 className="font-medium mb-2">Privacy Policy</h4>
-              <p className="text-sm text-muted-foreground">
-                How we collect, use, and protect your information
-              </p>
-            </a>
-            <a
-              href="/legal/terms"
-              className="p-4 border rounded-lg hover:border-primary transition-colors"
-            >
-              <h4 className="font-medium mb-2">Terms of Service</h4>
-              <p className="text-sm text-muted-foreground">
-                Our terms and conditions for using Plushify
-              </p>
-            </a>
-            <a
-              href="/legal/refund"
-              className="p-4 border rounded-lg hover:border-primary transition-colors"
-            >
-              <h4 className="font-medium mb-2">Refund Policy</h4>
-              <p className="text-sm text-muted-foreground">
-                Our policy for credit refunds and cancellations
-              </p>
-            </a>
-          </div>
         </div>
       </div>
 

@@ -1,8 +1,7 @@
-import { TableOfContents } from "@/components/legal/table-of-contents";
-import { LastUpdated } from "@/components/legal/last-updated";
-import { BackToTop } from "@/components/legal/back-to-top";
+import { LegalNav } from "@/components/legal/legal-nav";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 import {
-  DollarSign,
   CheckCircle,
   Clock,
   AlertTriangle,
@@ -12,27 +11,33 @@ import { Button } from "@/components/ui/button";
 
 export default function RefundPolicyPage() {
   return (
-    <div className="container mx-auto px-4 py-12 max-w-7xl">
-      {/* Header */}
-      <div className="mb-12 text-center">
-        <div className="flex items-center justify-center gap-3 mb-4">
-          <DollarSign className="h-10 w-10 text-primary" />
-          <h1 className="text-4xl font-bold">Refund Policy</h1>
-        </div>
-        <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-          We want you to be satisfied with Plushify. This policy outlines our
-          refund process for credit purchases and the circumstances under which
-          refunds are available.
-        </p>
-        <div className="mt-6 flex justify-center">
-          <LastUpdated date="January 15, 2025" />
-        </div>
-      </div>
+    <div className="container py-8 md:py-12">
+      <div className="flex flex-col gap-8 md:flex-row">
+        {/* Sidebar Navigation */}
+        <aside className="md:w-64 lg:w-72">
+          <LegalNav />
+        </aside>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_250px] gap-12">
         {/* Main Content */}
-        <main className="prose prose-gray dark:prose-invert max-w-none">
-          <section>
+        <main className="flex-1 min-w-0">
+          {/* Header */}
+          <div className="mb-8">
+            <Badge className="mb-4">Legal</Badge>
+            <h1 className="mb-4 text-4xl font-bold tracking-tight">
+              Refund Policy
+            </h1>
+            <p className="text-lg text-muted-foreground">
+              We want you to be satisfied with Plushify. This policy outlines our
+              refund process for credit purchases and the circumstances under which
+              refunds are available.
+            </p>
+          </div>
+
+          <Separator className="my-8" />
+
+          {/* Content */}
+          <div className="prose prose-gray dark:prose-invert max-w-none">
+            <section>
             <h2 id="overview">Overview</h2>
             <p>
               At Plushify, we strive to provide high-quality AI-powered plushie
@@ -46,6 +51,8 @@ export default function RefundPolicyPage() {
             </p>
           </section>
 
+          <Separator className="my-8" />
+
           <section>
             <h2 id="refund-eligibility" className="flex items-center gap-2">
               <CheckCircle className="h-6 w-6 text-primary" />
@@ -53,8 +60,8 @@ export default function RefundPolicyPage() {
             </h2>
             <p>You may be eligible for a refund in the following situations:</p>
 
-            <h3 id="technical-issues">Technical Issues</h3>
             <div className="bg-green-500/10 border border-green-500/20 p-4 rounded-lg">
+              <h3 id="technical-issues" className="mt-0 mb-3">Technical Issues</h3>
               <ul className="mb-0">
                 <li>
                   <strong>Service Outage:</strong> If our service is
@@ -76,8 +83,8 @@ export default function RefundPolicyPage() {
               </ul>
             </div>
 
-            <h3 id="dissatisfaction">Dissatisfaction with Service</h3>
-            <div className="bg-blue-500/10 border border-blue-500/20 p-4 rounded-lg">
+            <div className="bg-blue-500/10 border border-blue-500/20 p-4 rounded-lg mt-6">
+              <h3 id="dissatisfaction" className="mt-0 mb-3">Dissatisfaction with Service</h3>
               <ul className="mb-0">
                 <li>
                   <strong>First Purchase:</strong> If you&apos;re not satisfied
@@ -92,8 +99,8 @@ export default function RefundPolicyPage() {
               </ul>
             </div>
 
-            <h3 id="accidental-purchase">Accidental Purchase</h3>
-            <div className="bg-purple-500/10 border border-purple-500/20 p-4 rounded-lg">
+            <div className="bg-purple-500/10 border border-purple-500/20 p-4 rounded-lg mt-6">
+              <h3 id="accidental-purchase" className="mt-0 mb-3">Accidental Purchase</h3>
               <ul className="mb-0">
                 <li>
                   <strong>Wrong Package:</strong> If you accidentally purchased
@@ -106,6 +113,8 @@ export default function RefundPolicyPage() {
               </ul>
             </div>
           </section>
+
+          <Separator className="my-8" />
 
           <section>
             <h2 id="non-refundable" className="flex items-center gap-2">
@@ -151,6 +160,8 @@ export default function RefundPolicyPage() {
               </ul>
             </div>
           </section>
+
+          <Separator className="my-8" />
 
           <section>
             <h2 id="refund-process" className="flex items-center gap-2">
@@ -218,6 +229,8 @@ export default function RefundPolicyPage() {
             </p>
           </section>
 
+          <Separator className="my-8" />
+
           <section>
             <h2 id="refund-amount">Refund Amount</h2>
             <p>The refund amount depends on your situation:</p>
@@ -259,6 +272,8 @@ export default function RefundPolicyPage() {
               <li>As goodwill compensation for service problems</li>
             </ul>
           </section>
+
+          <Separator className="my-8" />
 
           <section>
             <h2 id="processing-time" className="flex items-center gap-2">
@@ -303,6 +318,8 @@ export default function RefundPolicyPage() {
               estimated time, please check with your bank or contact us.
             </p>
           </section>
+
+          <Separator className="my-8" />
 
           <section>
             <h2 id="special-circumstances">Special Circumstances</h2>
@@ -359,6 +376,8 @@ export default function RefundPolicyPage() {
             </ul>
           </section>
 
+          <Separator className="my-8" />
+
           <section>
             <h2 id="exceptions">Exceptions and Fair Use</h2>
             <p>
@@ -386,6 +405,8 @@ export default function RefundPolicyPage() {
               sustainability of our service and fairness to all users.
             </p>
           </section>
+
+          <Separator className="my-8" />
 
           <section>
             <h2 id="alternatives">Alternatives to Refunds</h2>
@@ -418,6 +439,8 @@ export default function RefundPolicyPage() {
               of processing a refund.
             </p>
           </section>
+
+          <Separator className="my-8" />
 
           <section>
             <h2 id="contact-refunds" className="flex items-center gap-2">
@@ -469,6 +492,8 @@ export default function RefundPolicyPage() {
             </div>
           </section>
 
+          <Separator className="my-8" />
+
           <section>
             <h2 id="policy-changes">Changes to This Policy</h2>
             <p>
@@ -487,6 +512,8 @@ export default function RefundPolicyPage() {
             </ul>
           </section>
 
+          <Separator className="my-8" />
+
           <section>
             <h2 id="legal-rights">Your Legal Rights</h2>
             <p>
@@ -501,47 +528,13 @@ export default function RefundPolicyPage() {
               (credits).
             </p>
           </section>
+          </div>
 
-          {/* Back to top */}
-          <BackToTop />
+          {/* Last Updated */}
+          <div className="mt-8 text-sm text-muted-foreground">
+            Last updated: January 15, 2025
+          </div>
         </main>
-
-        {/* Table of Contents */}
-        <TableOfContents />
-      </div>
-
-      {/* Related Legal Pages */}
-      <div className="mt-16 pt-8 border-t">
-        <h3 className="text-lg font-semibold mb-4">Related Legal Documents</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <a
-            href="/legal/privacy"
-            className="p-4 border rounded-lg hover:border-primary transition-colors"
-          >
-            <h4 className="font-medium mb-2">Privacy Policy</h4>
-            <p className="text-sm text-muted-foreground">
-              How we collect, use, and protect your information
-            </p>
-          </a>
-          <a
-            href="/legal/terms"
-            className="p-4 border rounded-lg hover:border-primary transition-colors"
-          >
-            <h4 className="font-medium mb-2">Terms of Service</h4>
-            <p className="text-sm text-muted-foreground">
-              Our terms and conditions for using Plushify
-            </p>
-          </a>
-          <a
-            href="/legal/cookies"
-            className="p-4 border rounded-lg hover:border-primary transition-colors"
-          >
-            <h4 className="font-medium mb-2">Cookie Policy</h4>
-            <p className="text-sm text-muted-foreground">
-              How we use cookies and tracking technologies
-            </p>
-          </a>
-        </div>
       </div>
     </div>
   );

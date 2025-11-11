@@ -1,5 +1,4 @@
 import { DocsNav } from "@/components/docs/docs-nav";
-import { DocsSearch } from "@/components/docs/docs-search";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -30,11 +29,6 @@ export default function FAQPage() {
               Quick answers to common questions about Plushify. Can&apos;t find what
               you&apos;re looking for? Contact our support team.
             </p>
-          </div>
-
-          {/* Search */}
-          <div className="mb-8">
-            <DocsSearch />
           </div>
 
           <Separator className="my-8" />

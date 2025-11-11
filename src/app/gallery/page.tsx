@@ -49,7 +49,7 @@ export default function GalleryPage() {
   // Show empty state if no generations
   if (mockGenerations.length === 0) {
     return (
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 max-w-7xl">
         <EmptyState />
       </div>
     );
@@ -57,7 +57,7 @@ export default function GalleryPage() {
 
   return (
     <>
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 max-w-7xl">
         {/* Page Header */}
         <div className="mb-8">
           <Breadcrumbs className="mb-4" />

@@ -24,7 +24,7 @@ import {
 
 export default function PricingPage() {
   return (
-    <main className="flex-1">
+    <main className="flex-1 max-w-7xl mx-auto">
       {/* Page Hero */}
       <section className="container mx-auto px-4 py-16 md:py-24">
         <div className="max-w-3xl mx-auto text-center space-y-4">
