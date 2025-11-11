@@ -1,221 +1,287 @@
 "use client";
 
-import { useSession } from "@/lib/auth-client";
+import Link from "next/link";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Mail, Calendar, User, Shield, ArrowLeft } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { CreditDisplay } from "@/components/credits/credit-display";
+import { StatCard } from "@/components/dashboard/stat-card";
+import {
+  User,
+  Lock,
+  Mail,
+  Trash2,
+  FileText,
+  Sparkles,
+  LayoutGrid,
+  DollarSign,
+} from "lucide-react";
+import { mockUser } from "@/lib/mock-data";
 
 export default function ProfilePage() {
-  const { data: session, isPending } = useSession();
-  const router = useRouter();
+  // Using mock user data (no authentication)
+  const user = mockUser;
 
-  if (isPending) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div>Loading...</div>
-      </div>
-    );
-  }
-
-  if (!session) {
-    router.push("/");
-    return null;
-  }
-
-  const user = session.user;
-  const createdDate = user.createdAt ? new Date(user.createdAt).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  }) : null;
+  // Format member since date
+  const memberSinceFormatted = new Date(user.memberSince).toLocaleDateString(
+    "en-US",
+    {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    }
+  );
 
   return (
-    <div className="container max-w-4xl mx-auto py-8 px-4">
-      <div className="flex items-center gap-4 mb-8">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => router.back()}
-          className="flex items-center gap-2"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Back
-        </Button>
-        <h1 className="text-3xl font-bold">Your Profile</h1>
+    <div className="container max-w-6xl mx-auto py-8 px-4">
+      {/* Page Header */}
+      <div className="mb-8">
+        <h1 className="text-4xl font-bold mb-2">Your Profile</h1>
+        <p className="text-muted-foreground">
+          Manage your account, view your stats, and track your plushie journey
+        </p>
       </div>
 
-      <div className="grid gap-6">
-        {/* Profile Overview Card */}
-        <Card>
-          <CardHeader>
-            <div className="flex items-center space-x-4">
-              <Avatar className="h-20 w-20">
-                <AvatarImage
-                  src={user.image || ""}
-                  alt={user.name || "User"}
-                  referrerPolicy="no-referrer"
-                />
-                <AvatarFallback className="text-lg">
-                  {(
-                    user.name?.[0] ||
-                    user.email?.[0] ||
-                    "U"
-                  ).toUpperCase()}
-                </AvatarFallback>
-              </Avatar>
-              <div className="space-y-2">
-                <h2 className="text-2xl font-semibold">{user.name}</h2>
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <Mail className="h-4 w-4" />
-                  <span>{user.email}</span>
-                  {user.emailVerified && (
-                    <Badge variant="outline" className="text-green-600 border-green-600">
-                      <Shield className="h-3 w-3 mr-1" />
-                      Verified
-                    </Badge>
-                  )}
-                </div>
-                {createdDate && (
-                  <div className="flex items-center gap-2 text-muted-foreground text-sm">
-                    <Calendar className="h-4 w-4" />
-                    <span>Member since {createdDate}</span>
-                  </div>
-                )}
-              </div>
-            </div>
-          </CardHeader>
-        </Card>
+      <div className="grid gap-6 lg:grid-cols-3">
+        {/* Left Column - Main Content */}
+        <div className="space-y-6 lg:col-span-2">
+          {/* Credits Section - Top Priority */}
+          <div>
+            <h2 className="text-2xl font-semibold mb-4">Credit Balance</h2>
+            <CreditDisplay
+              creditCount={user.credits}
+              showPurchaseButton={true}
+            />
+          </div>
 
-        {/* Account Information */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Account Information</CardTitle>
-            <CardDescription>
-              Your account details and settings
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-muted-foreground">
-                  Full Name
-                </label>
-                <div className="p-3 border rounded-md bg-muted/10">
-                  {user.name || "Not provided"}
-                </div>
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-muted-foreground">
-                  Email Address
-                </label>
-                <div className="p-3 border rounded-md bg-muted/10 flex items-center justify-between">
-                  <span>{user.email}</span>
-                  {user.emailVerified && (
-                    <Badge variant="outline" className="text-green-600 border-green-600">
-                      Verified
-                    </Badge>
-                  )}
-                </div>
-              </div>
+          {/* Generation Statistics Section */}
+          <div>
+            <h2 className="text-2xl font-semibold mb-4">Your Statistics</h2>
+            <div className="grid gap-4 sm:grid-cols-3">
+              <StatCard
+                label="Total Plushies"
+                value={user.totalGenerations}
+                icon="Image"
+                trend="up"
+              />
+              <StatCard
+                label="Credits Purchased"
+                value={user.totalCreditsPurchased}
+                icon="Coins"
+              />
+              <StatCard
+                label="Credits Used"
+                value={user.totalCreditsUsed}
+                icon="TrendingUp"
+              />
             </div>
-            
-            <Separator />
-            
-            <div className="space-y-4">
-              <h3 className="text-lg font-medium">Account Status</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="flex items-center justify-between p-4 border rounded-lg">
-                  <div className="space-y-1">
-                    <p className="font-medium">Email Verification</p>
-                    <p className="text-sm text-muted-foreground">
-                      Email address verification status
-                    </p>
+          </div>
+
+          {/* Account Actions Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Account Actions</CardTitle>
+              <CardDescription>
+                Manage your account settings and preferences
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <Button
+                  variant="outline"
+                  className="justify-start h-auto p-4"
+                  disabled
+                >
+                  <User className="h-5 w-5 mr-3 shrink-0" />
+                  <div className="text-left">
+                    <div className="font-medium flex items-center gap-2">
+                      Edit Profile
+                      <Badge variant="secondary" className="text-xs">
+                        Coming Soon
+                      </Badge>
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      Update your information
+                    </div>
                   </div>
-                  <Badge variant={user.emailVerified ? "default" : "secondary"}>
-                    {user.emailVerified ? "Verified" : "Unverified"}
+                </Button>
+
+                <Button
+                  variant="outline"
+                  className="justify-start h-auto p-4"
+                  disabled
+                >
+                  <Lock className="h-5 w-5 mr-3 shrink-0" />
+                  <div className="text-left">
+                    <div className="font-medium flex items-center gap-2">
+                      Change Password
+                      <Badge variant="secondary" className="text-xs">
+                        Coming Soon
+                      </Badge>
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      Update your password
+                    </div>
+                  </div>
+                </Button>
+
+                <Button
+                  variant="outline"
+                  className="justify-start h-auto p-4"
+                  disabled
+                >
+                  <Mail className="h-5 w-5 mr-3 shrink-0" />
+                  <div className="text-left">
+                    <div className="font-medium flex items-center gap-2">
+                      Email Preferences
+                      <Badge variant="secondary" className="text-xs">
+                        Coming Soon
+                      </Badge>
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      Configure notifications
+                    </div>
+                  </div>
+                </Button>
+
+                <Button
+                  variant="outline"
+                  className="justify-start h-auto p-4 border-red-200 dark:border-red-900 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950"
+                  disabled
+                >
+                  <Trash2 className="h-5 w-5 mr-3 shrink-0" />
+                  <div className="text-left">
+                    <div className="font-medium flex items-center gap-2">
+                      Delete Account
+                      <Badge variant="secondary" className="text-xs">
+                        Coming Soon
+                      </Badge>
+                    </div>
+                    <div className="text-xs opacity-75">
+                      Permanently delete account
+                    </div>
+                  </div>
+                </Button>
+              </div>
+
+              <p className="text-xs text-muted-foreground mt-4">
+                Additional account management features will be available soon.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Right Column - Sidebar */}
+        <div className="space-y-6">
+          {/* Account Information Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Account Information</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Avatar and Basic Info */}
+              <div className="flex flex-col items-center text-center">
+                <Avatar className="h-24 w-24 mb-4">
+                  <AvatarImage
+                    src={user.avatar}
+                    alt={user.name}
+                    referrerPolicy="no-referrer"
+                  />
+                  <AvatarFallback className="text-2xl">
+                    {user.name[0].toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                <h3 className="text-xl font-semibold">{user.name}</h3>
+                <p className="text-sm text-muted-foreground">{user.email}</p>
+              </div>
+
+              <Separator />
+
+              {/* Member Details */}
+              <div className="space-y-3 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Member Since</span>
+                  <span className="font-medium">{memberSinceFormatted}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Account ID</span>
+                  <span className="font-mono font-medium text-xs">
+                    {user.id}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-muted-foreground">Account Status</span>
+                  <Badge variant="default" className="bg-green-600">
+                    Active
                   </Badge>
                 </div>
-                <div className="flex items-center justify-between p-4 border rounded-lg">
-                  <div className="space-y-1">
-                    <p className="font-medium">Account Type</p>
-                    <p className="text-sm text-muted-foreground">
-                      Your account access level
-                    </p>
-                  </div>
-                  <Badge variant="outline">Standard</Badge>
-                </div>
               </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
 
-        {/* Account Activity */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Recent Activity</CardTitle>
-            <CardDescription>
-              Your recent account activity and sessions
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between p-4 border rounded-lg">
-                <div className="flex items-center space-x-3">
-                  <div className="h-2 w-2 bg-green-500 rounded-full"></div>
-                  <div>
-                    <p className="font-medium">Current Session</p>
-                    <p className="text-sm text-muted-foreground">Active now</p>
-                  </div>
-                </div>
-                <Badge variant="outline" className="text-green-600 border-green-600">
-                  Active
-                </Badge>
+          {/* Quick Links Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Quick Links</CardTitle>
+              <CardDescription>Navigate to key sections</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                <Button
+                  asChild
+                  variant="ghost"
+                  className="w-full justify-start"
+                >
+                  <Link href="/gallery">
+                    <LayoutGrid className="mr-3 h-4 w-4" />
+                    View Gallery
+                  </Link>
+                </Button>
+
+                <Button
+                  asChild
+                  variant="ghost"
+                  className="w-full justify-start"
+                >
+                  <Link href="/generate">
+                    <Sparkles className="mr-3 h-4 w-4" />
+                    Generate Plushie
+                  </Link>
+                </Button>
+
+                <Button
+                  asChild
+                  variant="ghost"
+                  className="w-full justify-start"
+                >
+                  <Link href="/pricing">
+                    <DollarSign className="mr-3 h-4 w-4" />
+                    View Pricing
+                  </Link>
+                </Button>
+
+                <Button
+                  asChild
+                  variant="ghost"
+                  className="w-full justify-start"
+                >
+                  <Link href="/docs">
+                    <FileText className="mr-3 h-4 w-4" />
+                    Documentation
+                  </Link>
+                </Button>
               </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Quick Actions */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
-            <CardDescription>
-              Manage your account settings and preferences
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Button variant="outline" className="justify-start h-auto p-4" disabled>
-                <User className="h-4 w-4 mr-2" />
-                <div className="text-left">
-                  <div className="font-medium">Edit Profile</div>
-                  <div className="text-xs text-muted-foreground">Update your information</div>
-                </div>
-              </Button>
-              <Button variant="outline" className="justify-start h-auto p-4" disabled>
-                <Shield className="h-4 w-4 mr-2" />
-                <div className="text-left">
-                  <div className="font-medium">Security Settings</div>
-                  <div className="text-xs text-muted-foreground">Manage security options</div>
-                </div>
-              </Button>
-              <Button variant="outline" className="justify-start h-auto p-4" disabled>
-                <Mail className="h-4 w-4 mr-2" />
-                <div className="text-left">
-                  <div className="font-medium">Email Preferences</div>
-                  <div className="text-xs text-muted-foreground">Configure notifications</div>
-                </div>
-              </Button>
-            </div>
-            <p className="text-xs text-muted-foreground mt-4">
-              Additional profile management features coming soon.
-            </p>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );
