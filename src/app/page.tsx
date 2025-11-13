@@ -2,22 +2,16 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { PlushifyIcon } from "@/components/plushify-logo";
 import { FeatureCard } from "@/components/landing/feature-card";
 import { BeforeAfterSlider } from "@/components/landing/before-after-slider";
-import {
-  mockFeatures,
-  mockTestimonials,
-} from "@/lib/mock-data";
+import { mockFeatures } from "@/lib/mock-data";
 import {
   Upload,
   Sparkles,
   Download,
   ArrowRight,
-  Star,
   CheckCircle2,
 } from "lucide-react";
 
@@ -57,8 +51,8 @@ export default function Home() {
           {/* Before/After Showcase */}
           <div className="mt-12 max-w-4xl mx-auto">
             <BeforeAfterSlider
-              beforeImage="/example/before.jpg"
-              afterImage="/example/after.webp"
+              beforeImage="/examples/landing/before.webp"
+              afterImage="/examples/landing/after.webp"
               beforeLabel="Original Photo"
               afterLabel="Plushified"
             />
@@ -159,56 +153,6 @@ export default function Home() {
                 keep as a digital keepsake
               </p>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials Section */}
-      <section className="py-16 md:py-24">
-        <div className="container mx-auto px-4">
-          <div className="text-center space-y-4 mb-12">
-            <h2 className="text-3xl md:text-5xl font-bold">
-              What Our Users Say
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Join thousands of happy users creating adorable plushie designs
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
-            {mockTestimonials.map((testimonial) => (
-              <Card
-                key={testimonial.id}
-                className="p-6 space-y-4 hover:shadow-lg transition-shadow"
-              >
-                <div className="flex gap-1">
-                  {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star
-                      key={i}
-                      className="h-4 w-4 fill-primary text-primary"
-                    />
-                  ))}
-                </div>
-                <p className="text-sm text-muted-foreground italic">
-                  {testimonial.quote}
-                </p>
-                <div className="flex items-center gap-3 pt-2">
-                  <Avatar className="h-10 w-10 bg-primary/10">
-                    <div className="flex items-center justify-center h-full w-full text-primary font-bold">
-                      {testimonial.name[0]}
-                    </div>
-                  </Avatar>
-                  <div>
-                    <div className="font-semibold text-sm">
-                      {testimonial.name}
-                    </div>
-                    <div className="text-xs text-muted-foreground">
-                      Verified User
-                    </div>
-                  </div>
-                </div>
-              </Card>
-            ))}
           </div>
         </div>
       </section>
