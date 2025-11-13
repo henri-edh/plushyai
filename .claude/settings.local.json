@@ -10,7 +10,12 @@
       "mcp__playwright__browser_take_screenshot",
       "mcp__playwright__browser_close",
       "Bash(git add:*)",
-      "Bash(git log:*)"
+      "Bash(git log:*)",
+      "WebSearch",
+      "Bash(pnpm run db:generate:*)",
+      "Bash(pnpm run db:migrate:*)",
+      "Bash(pnpm run typecheck:*)",
+      "Bash(pnpm run lint)"
     ],
     "additionalDirectories": [
       "C:\\c\\Projects\\nextjs-better-auth-postgresql-starter-kit"

@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,6 +16,7 @@ import { PlushieCard } from "@/components/plushie/plushie-card";
 import { BeforeAfterSlider } from "@/components/plushie/before-after-slider";
 import { EmptyState } from "@/components/gallery/empty-state";
 import { Breadcrumbs } from "@/components/navigation/breadcrumbs";
+import { useSession } from "@/lib/auth-client";
 import {
   mockGenerations,
   formatGenerationDate,
@@ -22,9 +24,35 @@ import {
 } from "@/lib/mock-data";
 
 export default function GalleryPage() {
+  const router = useRouter();
+  const { data: session, isPending } = useSession();
   const [selectedGeneration, setSelectedGeneration] =
     useState<PlushieGeneration | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Redirect to sign-in if not authenticated
+  useEffect(() => {
+    if (!isPending && !session) {
+      router.push("/sign-in");
+    }
+  }, [session, isPending, router]);
+
+  // Show loading while checking authentication
+  if (isPending) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Don't render if not authenticated (will redirect)
+  if (!session) {
+    return null;
+  }
 
   // Handle viewing a plushie in the modal
   const handleView = (generation: PlushieGeneration) => {

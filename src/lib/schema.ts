@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, boolean } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, boolean, integer, index } from "drizzle-orm/pg-core";
 
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
@@ -6,6 +6,8 @@ export const user = pgTable("user", {
   email: text("email").notNull().unique(),
   emailVerified: boolean("email_verified").default(false).notNull(),
   image: text("image"),
+  platformRole: text("platform_role").default("user").notNull(),
+  credits: integer("credits").default(0).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
     .defaultNow()
@@ -26,7 +28,11 @@ export const session = pgTable("session", {
   userId: text("user_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
-});
+}, (table) => ({
+  // Add indexes for better query performance
+  userIdIdx: index("session_user_id_idx").on(table.userId),
+  expiresAtIdx: index("session_expires_at_idx").on(table.expiresAt),
+}));
 
 export const account = pgTable("account", {
   id: text("id").primaryKey(),
@@ -46,7 +52,11 @@ export const account = pgTable("account", {
   updatedAt: timestamp("updated_at")
     .$onUpdate(() => /* @__PURE__ */ new Date())
     .notNull(),
-});
+}, (table) => ({
+  // Add indexes for better query performance
+  userIdIdx: index("account_user_id_idx").on(table.userId),
+  providerAccountIdx: index("account_provider_account_idx").on(table.providerId, table.accountId),
+}));
 
 export const verification = pgTable("verification", {
   id: text("id").primaryKey(),
@@ -59,5 +69,3 @@ export const verification = pgTable("verification", {
     .$onUpdate(() => /* @__PURE__ */ new Date())
     .notNull(),
 });
-
-

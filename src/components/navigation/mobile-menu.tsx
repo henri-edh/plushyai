@@ -6,7 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { CreditBadge } from "@/components/credits/credit-badge";
-import { mockUser } from "@/lib/mock-data";
+import { useSession } from "@/lib/auth-client";
+import { SignInButton } from "@/components/auth/sign-in-button";
+import { SignOutButton } from "@/components/auth/sign-out-button";
 import { cn } from "@/lib/utils";
 import { useEffect } from "react";
 
@@ -17,6 +19,8 @@ interface MobileMenuProps {
 }
 
 export function MobileMenu({ open, onClose, navigation }: MobileMenuProps) {
+  const { data: session, isPending } = useSession();
+
   // Prevent body scroll when menu is open
   useEffect(() => {
     if (open) {
@@ -57,25 +61,50 @@ export function MobileMenu({ open, onClose, navigation }: MobileMenuProps) {
             </Button>
           </div>
 
-          {/* User Profile Section */}
-          <div className="p-4 space-y-4">
-            <div className="flex items-center gap-3">
-              <Avatar className="h-12 w-12">
-                <AvatarImage src={mockUser.avatar} alt={mockUser.name} />
-                <AvatarFallback>{mockUser.name.charAt(0)}</AvatarFallback>
-              </Avatar>
-              <div className="flex-1">
-                <p className="text-sm font-medium">{mockUser.name}</p>
-                <p className="text-xs text-muted-foreground">
-                  {mockUser.email}
-                </p>
+          {/* Loading State */}
+          {isPending && (
+            <div className="p-4 space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="h-12 w-12 animate-pulse rounded-full bg-muted" />
+                <div className="flex-1 space-y-2">
+                  <div className="h-4 w-24 animate-pulse rounded bg-muted" />
+                  <div className="h-3 w-32 animate-pulse rounded bg-muted" />
+                </div>
               </div>
             </div>
+          )}
 
-            <Link href="/pricing" onClick={onClose}>
-              <CreditBadge creditCount={mockUser.credits} className="w-fit" />
-            </Link>
-          </div>
+          {/* Sign In Prompt - show when not authenticated */}
+          {!isPending && !session && (
+            <div className="p-4 space-y-4">
+              <p className="text-sm text-muted-foreground">
+                Sign in to access your account
+              </p>
+              <SignInButton />
+            </div>
+          )}
+
+          {/* User Profile Section - show when authenticated */}
+          {!isPending && session && (
+            <div className="p-4 space-y-4">
+              <div className="flex items-center gap-3">
+                <Avatar className="h-12 w-12">
+                  <AvatarImage src={session.user.image ?? undefined} alt={session.user.name ?? "User"} />
+                  <AvatarFallback>{session.user.name?.charAt(0) ?? "U"}</AvatarFallback>
+                </Avatar>
+                <div className="flex-1">
+                  <p className="text-sm font-medium">{session.user.name}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {session.user.email}
+                  </p>
+                </div>
+              </div>
+
+              <Link href="/pricing" onClick={onClose}>
+                <CreditBadge creditCount={(session.user as typeof session.user & { credits?: number }).credits ?? 0} className="w-fit" />
+              </Link>
+            </div>
+          )}
 
           <Separator />
 
@@ -96,16 +125,16 @@ export function MobileMenu({ open, onClose, navigation }: MobileMenuProps) {
           <Separator />
 
           {/* Bottom Actions */}
-          <div className="p-4 space-y-2">
-            <Button asChild variant="outline" className="w-full">
-              <Link href="/profile" onClick={onClose}>
-                View Profile
-              </Link>
-            </Button>
-            <Button variant="ghost" className="w-full">
-              Sign Out
-            </Button>
-          </div>
+          {!isPending && session && (
+            <div className="p-4 space-y-2">
+              <Button asChild variant="outline" className="w-full">
+                <Link href="/profile" onClick={onClose}>
+                  View Profile
+                </Link>
+              </Button>
+              <SignOutButton />
+            </div>
+          )}
         </div>
       </div>
     </>

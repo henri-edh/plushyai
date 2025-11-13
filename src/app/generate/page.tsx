@@ -1,26 +1,55 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ArrowLeft, Download, Share2, Upload, Sparkles, AlertCircle } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ImageUploadZone } from "@/components/plushie/image-upload-zone";
 import { BeforeAfterSlider } from "@/components/plushie/before-after-slider";
 import { CreditBadge } from "@/components/credits/credit-badge";
 import { Breadcrumbs } from "@/components/navigation/breadcrumbs";
-import { mockUser } from "@/lib/mock-data";
+import { useSession } from "@/lib/auth-client";
 
 type GenerationState = "upload" | "preview" | "generating" | "success" | "error";
 type SubjectType = "person" | "pet" | "other";
 
 export default function GeneratePage() {
+  const router = useRouter();
+  const { data: session, isPending } = useSession();
   const [state, setState] = useState<GenerationState>("upload");
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [subjectType, setSubjectType] = useState<SubjectType>("person");
   const [generatedImage, setGeneratedImage] = useState<string>("/examples/plushie-1.jpg");
   const [error, setError] = useState<string>("");
+
+  // Redirect to sign-in if not authenticated
+  useEffect(() => {
+    if (!isPending && !session) {
+      router.push("/sign-in");
+    }
+  }, [session, isPending, router]);
+
+  // Show loading while checking authentication
+  if (isPending) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Don't render if not authenticated (will redirect)
+  if (!session) {
+    return null;
+  }
+
+  const userCredits = (session.user as typeof session.user & { credits?: number }).credits ?? 0;
 
   const handleFileUpload = (file: File) => {
     setUploadedFile(file);
@@ -89,7 +118,7 @@ export default function GeneratePage() {
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Dashboard
             </Link>
-            <CreditBadge creditCount={mockUser.credits} />
+            <CreditBadge creditCount={userCredits} />
           </div>
 
           <Breadcrumbs />
@@ -210,19 +239,19 @@ export default function GeneratePage() {
                       </div>
                       <div className="text-right">
                         <p className="text-sm text-muted-foreground">Your Balance</p>
-                        <p className="text-2xl font-bold">{mockUser.credits} Credits</p>
+                        <p className="text-2xl font-bold">{userCredits} Credits</p>
                       </div>
                     </div>
                     <Button
                       onClick={handleGenerate}
                       className="w-full"
                       size="lg"
-                      disabled={mockUser.credits < 1}
+                      disabled={userCredits < 1}
                     >
                       <Sparkles className="w-5 h-5 mr-2" />
                       Generate Plushie
                     </Button>
-                    {mockUser.credits < 1 && (
+                    {userCredits < 1 && (
                       <p className="text-sm text-destructive mt-2 text-center">
                         You don&apos;t have enough credits. <Link href="/pricing" className="underline">Buy more</Link>
                       </p>

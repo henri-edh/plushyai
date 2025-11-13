@@ -1,6 +1,6 @@
-"use client";
-
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -24,14 +24,22 @@ import {
   LayoutGrid,
   DollarSign,
 } from "lucide-react";
-import { mockUser } from "@/lib/mock-data";
+import { auth } from "@/lib/auth";
 
-export default function ProfilePage() {
-  // Using mock user data (no authentication)
-  const user = mockUser;
+export default async function ProfilePage() {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session) redirect("/sign-in");
+
+  const user = session.user as typeof session.user & { credits: number };
+
+  // Temporary placeholders for fields not yet in schema
+  const totalGenerations = 0; // Will be calculated from generations table later
+  const totalCreditsPurchased = 0; // Will be tracked in future
+  const totalCreditsUsed = 0; // Will be tracked in future
+  const memberSince = user.createdAt ? new Date(user.createdAt).toISOString() : new Date().toISOString();
 
   // Format member since date
-  const memberSinceFormatted = new Date(user.memberSince).toLocaleDateString(
+  const memberSinceFormatted = new Date(memberSince).toLocaleDateString(
     "en-US",
     {
       year: "numeric",
@@ -68,18 +76,18 @@ export default function ProfilePage() {
             <div className="grid gap-4 sm:grid-cols-3">
               <StatCard
                 label="Total Plushies"
-                value={user.totalGenerations}
+                value={totalGenerations}
                 icon="Image"
                 trend="up"
               />
               <StatCard
                 label="Credits Purchased"
-                value={user.totalCreditsPurchased}
+                value={totalCreditsPurchased}
                 icon="Coins"
               />
               <StatCard
                 label="Credits Used"
-                value={user.totalCreditsUsed}
+                value={totalCreditsUsed}
                 icon="TrendingUp"
               />
             </div>
@@ -191,7 +199,7 @@ export default function ProfilePage() {
               <div className="flex flex-col items-center text-center">
                 <Avatar className="h-24 w-24 mb-4">
                   <AvatarImage
-                    src={user.avatar}
+                    src={user.image ?? undefined}
                     alt={user.name}
                     referrerPolicy="no-referrer"
                   />
