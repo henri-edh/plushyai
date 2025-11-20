@@ -54,6 +54,7 @@ Run two terminals concurrently:
 **Server Configuration** (`src/lib/auth.ts`):
 - Better Auth instance configured with Google OAuth
 - Security features: CSRF protection, rate limiting (10 req/min), secure cookies
+- **IMPORTANT:** Polar webhook endpoint (`/polar/webhooks`) is excluded from rate limiting to prevent blocking payment notifications
 - Session: 7-day expiry, cookie caching (5 min) for performance
 - Custom user fields: `credits` (number), `platformRole` (string)
 - Environment validation at startup ensures required vars exist
@@ -294,8 +295,11 @@ inngest.createFunction(
 2. **Better Auth Integration** (`src/lib/auth.ts`):
    - Polar plugin with `checkout()`, `portal()`, and `webhooks()` sub-plugins
    - Auto-creates Polar customer on user signup (`createCustomerOnSignUp: true`)
+   - Checkout with `authenticatedUsersOnly: true` pre-fills user email and locks it
    - Checkout redirects to `/checkout/success` after payment
    - Webhook handler sends Inngest event `polar/order.paid` for async processing
+   - **IMPORTANT:** Webhook payload's `userId` contains Polar customer ID, NOT Better Auth user ID
+   - **CRITICAL:** Use `payload.data.customer.externalId` to get the Better Auth user ID (set by Better Auth when creating Polar customer)
 
 3. **Client Integration** (`src/lib/auth-client.ts`):
    - Exported `checkout()` and `customer` methods from Polar client
@@ -384,6 +388,14 @@ inngest.createFunction(
 - No credit card data stored in application (Polar handles PCI compliance)
 - Atomic database transactions prevent race conditions
 - Unique constraints prevent duplicate credit additions
+- Webhook endpoint excluded from rate limiting to prevent blocking payment notifications
+
+**Troubleshooting Webhooks:**
+
+- **429 Error in webhook logs:** Indicates rate limiting issue. The `/polar/webhooks` path is excluded from rate limiting in `src/lib/auth.ts`. If you see 429 errors, verify the `customRules` configuration.
+- **Webhooks not received:** Check Polar dashboard webhook logs for delivery attempts and error messages
+- **Credits not added:** Verify Inngest function is running and check logs in Inngest Dev UI at http://localhost:8288
+- **Duplicate webhook prevention:** The `polarOrderId` unique constraint prevents double-crediting even if Polar retries webhooks
 
 ### Environment Variables
 

@@ -9,13 +9,28 @@ interface CreditData {
   availableCredits: number;
 }
 
+interface UseCreditsOptions {
+  /**
+   * Enable automatic polling to refresh credits periodically
+   * @default true
+   */
+  enablePolling?: boolean;
+  /**
+   * Polling interval in milliseconds
+   * @default 10000 (10 seconds)
+   */
+  pollingInterval?: number;
+}
+
 /**
  * Custom hook to fetch and track user credits from the database.
- * Automatically refetches when the session changes.
+ * Automatically refetches when the session changes and polls every 10 seconds.
  *
+ * @param options - Configuration options for polling behavior
  * @returns Object containing credits, processing count, available credits, and loading state
  */
-export function useCredits() {
+export function useCredits(options: UseCreditsOptions = {}) {
+  const { enablePolling = true, pollingInterval = 10000 } = options;
   const { data: session, isPending: sessionPending } = useSession();
   const [creditData, setCreditData] = useState<CreditData>({
     credits: 0,
@@ -38,7 +53,9 @@ export function useCredits() {
 
       try {
         setIsLoading(true);
-        const response = await fetch("/api/user/credits");
+        const response = await fetch("/api/user/credits", {
+          cache: "no-store",
+        });
 
         if (!response.ok) {
           console.error("Failed to fetch credits:", response.statusText);
@@ -69,9 +86,21 @@ export function useCredits() {
     }
 
     if (!sessionPending) {
+      // Initial fetch
       fetchCredits();
+
+      // Set up polling if enabled
+      if (enablePolling) {
+        const pollInterval = setInterval(() => {
+          fetchCredits();
+        }, pollingInterval);
+
+        return () => {
+          clearInterval(pollInterval);
+        };
+      }
     }
-  }, [session?.user, sessionPending]);
+  }, [session?.user, sessionPending, enablePolling, pollingInterval]);
 
   return {
     credits: creditData.credits,

@@ -7,7 +7,7 @@ export const user = pgTable("user", {
   emailVerified: boolean("email_verified").default(false).notNull(),
   image: text("image"),
   platformRole: text("platform_role").default("user").notNull(),
-  credits: integer("credits").default(0).notNull(),
+  credits: integer("credits").default(1).notNull(), // New users get 1 free credit
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
     .defaultNow()

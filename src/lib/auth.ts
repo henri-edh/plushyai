@@ -6,6 +6,8 @@ import { Polar } from "@polar-sh/sdk"
 import { db } from "./db"
 import { POLAR_PRODUCTS } from "./polar-config"
 import { inngest } from "@/inngest/client"
+import { user } from "./schema"
+import { eq } from "drizzle-orm"
 
 /**
  * Validates that a required environment variable exists.
@@ -104,7 +106,6 @@ export const auth = betterAuth({
     cookieCache: {
       enabled: true,
       maxAge: 5 * 60, // 5 minutes - cache duration (balance between performance and freshness)
-      strategy: "compact", // Options: "compact" (smallest), "jwt" (standard), or "jwe" (encrypted)
     },
   },
 
@@ -129,6 +130,10 @@ export const auth = betterAuth({
     enabled: true,
     window: 60, // 60 seconds
     max: 10, // Maximum 10 requests per minute per IP
+    customRules: {
+      // Disable rate limiting for Polar webhooks to prevent blocking legitimate payment notifications
+      "/polar/webhooks": false,
+    },
   },
 
   socialProviders: {
@@ -143,7 +148,7 @@ export const auth = betterAuth({
       credits: {
         type: "number",
         required: false,
-        defaultValue: 0,
+        defaultValue: 1, // New users get 1 free credit
         input: false,
       },
       platformRole: {
@@ -169,23 +174,52 @@ export const auth = betterAuth({
             slug: product.slug,
           })),
           successUrl: `${process.env.NEXT_PUBLIC_APP_URL}/checkout/success`,
+          authenticatedUsersOnly: true,
         }),
         portal(),
         webhooks({
           secret: polarWebhookSecret,
           onOrderPaid: async (payload) => {
+            // The Better Auth Polar plugin stores the Better Auth user ID in customer.externalId
+            // payload.data.userId contains the Polar customer ID, not the Better Auth user ID
+            const betterAuthUserId = payload.data.customer?.externalId;
+
+            if (!betterAuthUserId) {
+              console.error("[Polar Webhook] No externalId found in customer object");
+              console.error("[Polar Webhook] Payload:", JSON.stringify(payload.data, null, 2));
+              throw new Error("No Better Auth user ID (externalId) found in Polar webhook payload");
+            }
+
+            console.log(`[Polar Webhook] Processing order for user ${betterAuthUserId} (${payload.data.customer?.email})`);
+
+            // Verify user exists in database
+            const existingUser = await db
+              .select({ id: user.id, email: user.email })
+              .from(user)
+              .where(eq(user.id, betterAuthUserId))
+              .limit(1);
+
+            if (!existingUser || existingUser.length === 0) {
+              console.error(`[Polar Webhook] User ${betterAuthUserId} not found in database`);
+              throw new Error(`User ${betterAuthUserId} not found in database`);
+            }
+
+            console.log(`[Polar Webhook] User verified: ${existingUser[0].email}`);
+
             // Send event to Inngest for async processing
             await inngest.send({
               name: "polar/order.paid",
               data: {
                 orderId: payload.data.id,
                 checkoutId: payload.data.checkoutId,
-                userId: payload.data.userId,
+                userId: betterAuthUserId, // Use the Better Auth user ID from externalId
                 productId: payload.data.productId,
                 amount: payload.data.totalAmount,
                 createdAt: payload.data.createdAt.toISOString(),
               },
             });
+
+            console.log(`[Polar Webhook] Successfully sent order.paid event to Inngest for order ${payload.data.id}`);
           },
         }),
       ],

@@ -14,6 +14,8 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { CreditDisplay } from "@/components/credits/credit-display";
 import { StatCard } from "@/components/dashboard/stat-card";
+import { TransactionHistory } from "@/components/credits/transaction-history";
+import { PolarPortalButton } from "@/components/polar/polar-portal-button";
 import {
   User,
   Lock,
@@ -23,6 +25,7 @@ import {
   Sparkles,
   LayoutGrid,
   DollarSign,
+  Receipt,
 } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { getUserFromDatabase } from "@/lib/auth-types";
@@ -96,6 +99,42 @@ export default async function ProfilePage() {
                 icon="TrendingUp"
               />
             </div>
+          </div>
+
+          {/* Billing & Payments Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Billing & Payments</CardTitle>
+              <CardDescription>
+                Manage your subscriptions, view invoices, and access your payment history
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-col gap-4">
+                <div className="rounded-lg border bg-muted/30 p-4">
+                  <div className="flex items-start gap-3">
+                    <Receipt className="h-5 w-5 mt-0.5 text-muted-foreground" />
+                    <div className="flex-1">
+                      <h4 className="font-medium mb-1">Customer Portal</h4>
+                      <p className="text-sm text-muted-foreground mb-3">
+                        Access your Polar customer portal to view orders, download invoices,
+                        manage subscriptions, and update your payment methods.
+                      </p>
+                      <PolarPortalButton variant="default" />
+                    </div>
+                  </div>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  You will be redirected to Polar&apos;s secure portal to manage your billing information.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Transaction History Section */}
+          <div>
+            <h2 className="text-2xl font-semibold mb-4">Transaction History</h2>
+            <TransactionHistory limit={50} />
           </div>
 
           {/* Account Actions Section */}

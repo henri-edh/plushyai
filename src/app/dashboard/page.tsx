@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { CreditDisplay } from "@/components/credits/credit-display";
 import { GenerationPreview } from "@/components/plushie/generation-preview";
 import { StatCard } from "@/components/dashboard/stat-card";
+import { DashboardClientWrapper } from "@/components/dashboard/dashboard-client-wrapper";
 import { auth } from "@/lib/auth";
 import { getUserFromDatabase } from "@/lib/auth-types";
 import { getRecentGenerations } from "@/lib/mock-data";
@@ -44,7 +45,8 @@ export default async function DashboardPage() {
   const memberSince = user.createdAt ? new Date(user.createdAt).toISOString() : new Date().toISOString();
 
   return (
-    <main className="flex-1">
+    <DashboardClientWrapper>
+      <main className="flex-1">
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         {/* User Welcome Section */}
         <div className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -282,5 +284,6 @@ export default async function DashboardPage() {
         </div>
       </div>
     </main>
+    </DashboardClientWrapper>
   );
 }

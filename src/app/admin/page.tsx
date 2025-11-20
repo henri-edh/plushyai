@@ -72,7 +72,7 @@ export default async function AdminPage() {
                   Email: {session.user.email}
                 </p>
                 <p className="text-sm text-muted-foreground">
-                  Role: {session.user.platformRole}
+                  Role: {(session.user as { platformRole?: string }).platformRole || "user"}
                 </p>
               </div>
             </CardContent>
